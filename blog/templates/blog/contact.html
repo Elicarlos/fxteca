@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Contato - Fuxicoteca{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Entre em Contato</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <h5>Endereço</h5>
+            <p>Rua Exemplo, 123 - Centro</p>
+        </div>
+        <div class="col-md-4">
+            <h5>Email</h5>
+            <p>contato@fuxicoteca.com.br</p>
+        </div>
+        <div class="col-md-4">
+            <h5>Telefone</h5>
+            <p>(99) 99999-9999</p>
+        </div>
+    </div>
+    <form class="mt-4">
+        <div class="mb-3">
+            <label for="name" class="form-label">Nome</label>
+            <input type="text" class="form-control" id="name">
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email">
+        </div>
+        <div class="mb-3">
+            <label for="message" class="form-label">Mensagem</label>
+            <textarea class="form-control" id="message" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar Mensagem</button>
+    </form>
+</div>
+{% endblock %}

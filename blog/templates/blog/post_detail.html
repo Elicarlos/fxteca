@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}{{ post.title }} - Fuxicoteca{% endblock %}
+
+
+{% block content %}
+<div class="container my-5">
+    <!-- Título e detalhes do post -->
+    <h1 class="mb-3">{{ post.title }}</h1>
+    <p class="text-muted">Por {{ post.author.get_full_name|default:post.author.username }} | {{ post.created_at|date:"d/m/Y" }}</p>
+    
+    <!-- Anúncio antes do conteúdo -->
+    <div class="adsense-before-content text-center mb-4">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+            data-ad-slot="1234567890"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
+    <!-- Imagem principal -->
+    <img src="{{ post.image.url }}" class="img-fluid rounded shadow mb-4" alt="{{ post.title }}">
+
+    <!-- Conteúdo do post -->
+    <div>
+        <p>{{ post.content|safe }}</p>
+
+        <div class="mt-4">
+            <h5>Compartilhe esta postagem:</h5>
+            <div class="d-flex">
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
+                   target="_blank" 
+                   class="btn btn-primary me-2">
+                    Compartilhar no Facebook
+                </a>
+                <!-- Twitter -->
+                <a href="https://twitter.com/intent/tweet?text={{ post.title }}&url={{ request.build_absolute_uri }}" 
+                   target="_blank" 
+                   class="btn btn-info me-2">
+                    Compartilhar no Twitter
+                </a>
+                <!-- WhatsApp -->
+                <a href="https://api.whatsapp.com/send?text={{ post.title }}: {{ request.build_absolute_uri }}" 
+                   target="_blank" 
+                   class="btn btn-success me-2">
+                    Compartilhar no WhatsApp
+                </a>
+                <!-- LinkedIn -->
+                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" 
+                   target="_blank" 
+                   class="btn btn-secondary">
+                    Compartilhar no LinkedIn
+                </a>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Comentários -->
+    <div class="mt-5">
+        <h3>Comentários</h3>
+        {% for comment in root_comments %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6 class="card-title">{{ comment.author.get_full_name|default:comment.author.username }}</h6>
+                <p class="card-text">{{ comment.content }}</p>
+                <p class="text-muted small">{{ comment.created_at|date:"d/m/Y H:i" }}</p>
+                
+                <!-- Respostas aos comentários -->
+                {% for reply in approved_replies|get_item:comment.id %}
+                <div class="card mt-2">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ reply.author.get_full_name|default:reply.author.username }}</h6>
+                        <p class="card-text">{{ reply.content }}</p>
+                        <p class="text-muted small">{{ reply.created_at|date:"d/m/Y H:i" }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <!-- Formulário para Responder -->
+                {% if user.is_authenticated %}
+                <form method="post" class="mt-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                    <textarea class="form-control" name="content" rows="2" placeholder="Responda a este comentário..."></textarea>
+                    <button type="submit" class="btn btn-secondary btn-sm mt-2">Responder</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Ainda não há comentários. Seja o primeiro!</p>
+        {% endfor %}
+    </div>
+    
+
+    <!-- Formulário de Comentários -->
+    <div class="mt-5">
+        <h3>Deixe um Comentário</h3>
+        {% if user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="parent_id" value=""> <!-- Sem parent_id, é um comentário raiz -->
+            {{ comment_form.as_p }}
+            <button type="submit" class="btn btn-primary">Enviar Comentário</button>
+        </form>
+        {% else %}
+        <p class="text-muted">Você precisa estar logado para comentar. <a href="{% url 'login' %}">Faça login</a>.</p>
+        {% endif %}
+    </div>
+
+    <!-- Anúncio após o conteúdo -->
+    <div class="adsense-after-content text-center mt-4">
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <ins class="adsbygoogle"
+            style="display:block"
+            data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+            data-ad-slot="1234567890"
+            data-ad-format="auto"
+            data-full-width-responsive="true"></ins>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+</div>
+{% endblock %}
