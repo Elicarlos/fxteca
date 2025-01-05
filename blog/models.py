@@ -32,7 +32,7 @@ class Category(models.Model):
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(unique=True)
     content = RichTextField()
     highlight_summary = models.TextField(null=True, blank=True, verbose_name="Resumo de Destaque")
@@ -42,19 +42,21 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     tags = TaggableManager()
+    keywords = models.TextField(null=True, blank=True, help_text="Palavras-chave separadas por vírgulas.")
+    canonical_url = models.URLField(null=True, blank=True, help_text="URL canônica para evitar duplicação.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     destaque = models.BooleanField(default=False) 
     is_published = models.BooleanField(default=True)
     
-    
     def generate_summary(self, content, caracteres):
         """Gera um resumo baseado no conteúdo e no número de caracteres."""
-        from django.utils.html import strip_tags
         if not content:
             return "Sem resumo disponível."
         clean_content = strip_tags(content)
-        return clean_content[:caracteres] + "..." if len(clean_content) > caracteres else clean_content
+        if len(clean_content) > caracteres:
+            return clean_content[:caracteres].rsplit(' ', 1)[0] + "..."
+        return clean_content
 
     def get_highlight_summary(self):
         """Retorna o resumo do destaque ou gera automaticamente."""
@@ -64,28 +66,26 @@ class Post(models.Model):
         """Retorna o resumo da lista ou gera automaticamente."""
         return self.list_summary or self.generate_summary(self.content, 100)
 
-    
-    def __str__(self):
-        return self.title
-    
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title)
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+            while Post.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
         super().save(*args, **kwargs)
-        
-    _metadata = {
-        'title': 'title',
-        'description': 'get_meta_description',
-        'keywords': 'get_meta_keywords',
-        'author': 'get_meta_author',
-        'image': 'get_meta_image',
-        'url': 'get_absolute_url',
-    }
-  
+
+    def __str__(self):
+        return self.title
+
     def get_meta_description(self):
         return self.content[:150]
 
     def get_meta_keywords(self):
+        if self.keywords:
+            return self.keywords
         return ', '.join(tag.name for tag in self.tags.all())
 
     def get_meta_author(self):
@@ -95,6 +95,21 @@ class Post(models.Model):
         return self.image.url if self.image else None
 
     def get_absolute_url(self):
-        from django.urls import reverse
         return reverse('post_detail', kwargs={'slug': self.slug})
     
+    @property
+    def meta_description(self):
+        return self.get_meta_description()
+
+    @property
+    def meta_keywords(self):
+        return self.get_meta_keywords()
+
+    @property
+    def meta_author(self):
+        return self.get_meta_author()
+
+    @property
+    def meta_image(self):
+        return self.get_meta_image()
+

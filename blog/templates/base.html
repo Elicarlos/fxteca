@@ -6,26 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     {% if post %}
-        <title>{{ post.title }} - Fuxicoteca</title>
-        <meta name="description" content="{{ post.content|truncatechars:150 }}">
-        <meta name="keywords" content="{{ post.category.name }}, {{ post.tags.all|join:', ' }}">
-        <meta name="author" content="{{ post.author.get_full_name|default:post.author.username }}">
-        <meta property="og:title" content="{{ post.title }}" />
-        <meta property="og:description" content="{{ post.content|truncatechars:150 }}" />
-        <meta property="og:image" content="{{ post.image.url }}" />
-        <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-        <meta property="og:type" content="article" />
-    {% else %}
-        <title>Fuxicoteca - Sua fonte de fofocas</title>
-        <meta name="description" content="Fuxicoteca é o blog onde você encontra tudo sobre o mundo das fofocas e realities.">
-        <meta name="keywords" content="fofoca, realities, celebridades, blog">
-        <meta name="author" content="Fuxicoteca">
-        <meta property="og:title" content="Fuxicoteca - Sua fonte de fofocas" />
-        <meta property="og:description" content="Descubra tudo sobre o mundo das fofocas e realities no Fuxicoteca!" />
-        <meta property="og:image" content="{% static 'images/default-thumbnail.jpg' %}" />
-        <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-        <meta property="og:type" content="website" />
+    <title>{{ post.title }} - Fuxicoteca</title>
+    <meta name="description" content="{{ post.get_highlight_summary }}">
+    <meta name="keywords" content="{{ post.keywords|default:post.tags.all|join:', ' }}">
+    <meta name="author" content="{{ post.author.get_full_name|default:post.author.username }}">
+    <meta property="og:title" content="{{ post.title }}" />
+    <meta property="og:description" content="{{ post.get_highlight_summary }}" />
+    
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="article" />
+    {% if post.canonical_url %}
+    <link rel="canonical" href="{{ post.canonical_url }}">
     {% endif %}
+{% else %}
+    <title>Fuxicoteca - Sua fonte de fofocas</title>
+    <meta name="description" content="Fuxicoteca é o blog onde você encontra tudo sobre o mundo das fofocas e realities.">
+    <meta name="keywords" content="fofoca, realities, celebridades, blog">
+    <meta name="author" content="Fuxicoteca">
+    <meta property="og:title" content="Fuxicoteca - Sua fonte de fofocas" />
+    <meta property="og:description" content="Descubra tudo sobre o mundo das fofocas e realities no Fuxicoteca!" />
+    <meta property="og:image" content="{% static 'images/default-thumbnail.jpg' %}" />
+    <meta property="og:url" content="{{ request.build_absolute_uri }}" />
+    <meta property="og:type" content="website" />
+{% endif %}
+
 
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6387746355563750"
      crossorigin="anonymous"></script>

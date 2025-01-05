@@ -19,10 +19,18 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
+from django.contrib.sitemaps.views import sitemap
+from blog.sitemaps import PostSitemap
+
+sitemaps_dict = {
+    'posts': PostSitemap,
+}
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps_dict}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', include('robots.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),  # Para upload de imagens
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
