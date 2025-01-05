@@ -28,8 +28,14 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['https://fuxicoteca-d2bb0ce5d25a.herokuapp.com/', '.fuxicoteca-d2bb0ce5d25a.herokuapp.com/', '127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = [
+    'fuxicoteca-d2bb0ce5d25a.herokuapp.com',
+    '.fuxicoteca-d2bb0ce5d25a.herokuapp.com',
+    '127.0.0.1',
+    'localhost',
+    'fuxicoteca.com.br',
+    'www.fuxicoteca.com.br'
+]
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True 
 
