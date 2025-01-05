@@ -6,6 +6,7 @@ from . models import Category, Post, Comment
 from django.template.loader import get_template
 from django.http import HttpResponse
 from django.core.paginator import Paginator
+import os
 
 
 def test_template(request):
@@ -28,6 +29,13 @@ class SearchResultsView(ListView):
 
 def post_detail(request):
     return HttpResponse('detail')
+
+def ads_txt(request):
+    file_path = os.path.join('static', 'ads.txt')  # Ajuste o caminho se necessário
+    with open(file_path, 'r') as file:
+        response = HttpResponse(file.read(), content_type="text/plain")
+        response['Content-Disposition'] = 'inline; filename=ads.txt'
+        return response
 
 class HomePageView(ListView):
     model = Post
