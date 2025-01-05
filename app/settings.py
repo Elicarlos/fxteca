@@ -42,9 +42,7 @@ SECURE_SSL_REDIRECT = True
 
 # Application definition
 
-INSTALLED_APPS = [
-    'django.contrib.sitemaps',
-    'robots',
+INSTALLED_APPS = [    
     'ckeditor',
     'ckeditor_uploader', 
     'django.contrib.admin',
@@ -53,10 +51,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
+    'robots',
+    'django.contrib.sites',
     'meta',
     'taggit',
     'blog'
 ]
+
+SITE_ID = 1
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
