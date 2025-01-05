@@ -43,6 +43,8 @@ SECURE_SSL_REDIRECT = True
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.sitemaps',
+    'robots',
     'ckeditor',
     'ckeditor_uploader', 
     'django.contrib.admin',
