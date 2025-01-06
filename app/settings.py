@@ -36,8 +36,8 @@ ALLOWED_HOSTS = [
     'fuxicoteca.com.br',
     'www.fuxicoteca.com.br'
 ]
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# SECURE_SSL_REDIRECT = True 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True 
 
 
 # Application definition
@@ -104,16 +104,16 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
+# DATABASES = {
+#     'default': dj_database_url.config(default=config('DATABASE_URL'))
+# }
 
 
 # Password validation
@@ -146,7 +146,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-MEDIA_URL = '/media/'
+
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -156,7 +156,7 @@ CKEDITOR_UPLOAD_PATH = 'uploads/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -172,9 +172,19 @@ CKEDITOR_IMAGE_BACKEND = "pillow"  # Backend para manipulação de imagens
 
 CKEDITOR_CONFIGS = {
     "default": {
+        'extraPlugins': 'codesnippet', 
         "toolbar": "full",  # Mostra a barra de ferramentas completa
         "height": 400,      # Altura do editor
         "width": "auto",    # Largura automática
+        'codeSnippet_theme': 'monokai_sublime',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['CodeSnippet'],  # Adiciona o botão de snippets à barra de ferramentas
+            ['Link', 'Unlink'],
+            ['Format', 'Font', 'FontSize'],
+            ['TextColor', 'BGColor'],
+            ['Smiley', 'Image', 'Table', 'HorizontalRule'],
+        ], 
         "extraPlugins": "image2",  # Plugin para trabalhar com imagens avançadas
         "filebrowserUploadUrl": "/ckeditor/upload/",  # URL de upload
         "filebrowserBrowseUrl": "/ckeditor/browse/",
@@ -189,11 +199,37 @@ AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')  # Regiã
 AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 
 # Configurar URL para acesso às imagens
-# MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+
+AWS_STATIC_LOCATION = "static"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_STATIC_LOCATION}/"
 
 # Configuração do backend de armazenamento
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
+}
+
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
 }
