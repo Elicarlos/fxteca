@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
     'fuxicoteca.com.br',
     'www.fuxicoteca.com.br'
 ]
+
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = True 
 
@@ -61,9 +62,6 @@ INSTALLED_APPS = [
 ]
 
 SITE_ID = 1
-
-
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -94,17 +92,9 @@ TEMPLATES = [
     },
 ]
 
-
-
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
-
-
 WSGI_APPLICATION = 'app.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
@@ -112,14 +102,12 @@ WSGI_APPLICATION = 'app.wsgi.application'
 #     }
 # }
 
+# Uncomment to use a PostgreSQL database:
 DATABASES = {
     'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
-
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -135,89 +123,74 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = 'pt-br'
-
 TIME_ZONE = 'America/Sao_Paulo'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-
-MEDIA_ROOT = BASE_DIR / 'media'
-
-CKEDITOR_UPLOAD_PATH = 'uploads/'
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
-
-
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CKEDITOR_UPLOAD_PATH = "uploads/"  # Caminho para salvar as imagens
-CKEDITOR_IMAGE_BACKEND = "pillow"  # Backend para manipulação de imagens
+# S3 and Media settings
+use_s3 = True
 
-CKEDITOR_CONFIGS = {
-    "default": {
-        'extraPlugins': 'codesnippet', 
-        "toolbar": "full",  # Mostra a barra de ferramentas completa
-        "height": 400,      # Altura do editor
-        "width": "auto",    # Largura automática
-        'codeSnippet_theme': 'monokai_sublime',
-        'toolbar_Custom': [
-            ['Bold', 'Italic', 'Underline'],
-            ['CodeSnippet'],  # Adiciona o botão de snippets à barra de ferramentas
-            ['Link', 'Unlink'],
-            ['Format', 'Font', 'FontSize'],
-            ['TextColor', 'BGColor'],
-            ['Smiley', 'Image', 'Table', 'HorizontalRule'],
-        ], 
-        "extraPlugins": "image2",  # Plugin para trabalhar com imagens avançadas
-        "filebrowserUploadUrl": "/ckeditor/upload/",  # URL de upload
-        "filebrowserBrowseUrl": "/ckeditor/browse/",
-    },
-}
+if use_s3:
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_DEFAULT_ACL = 'public-read'
 
-# Configurações do S3
-# Configurações do S3
-# Configurações AWS S3
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
-AWS_S3_CUSTOM_DOMAIN = config('AWS_S3_CUSTOM_DOMAIN', default=f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com')
+    # Static files
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Configuração para Media (banners e fotos dos posts)
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+    # Media files
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-# Configuração para Static (CSS, JS, imagens estáticas)
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    CKEDITOR_UPLOAD_PATH = "uploads/"  # Ajusta para enviar para o S3
+else:
+    # Local storage for static and media files
+    STATIC_URL = '/static/'
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Outros parâmetros do S3
+    CKEDITOR_UPLOAD_PATH = os.path.join(MEDIA_ROOT, "uploads/")
+
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
+# CKEditor settings
+CKEDITOR_IMAGE_BACKEND = "pillow"
+CKEDITOR_CONFIGS = {
+    "default": {
+        'extraPlugins': 'codesnippet', 
+        "toolbar": "full",
+        "height": 400,
+        "width": "auto",
+        'codeSnippet_theme': 'monokai_sublime',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline'],
+            ['CodeSnippet'],
+            ['Link', 'Unlink'],
+            ['Format', 'Font', 'FontSize'],
+            ['TextColor', 'BGColor'],
+            ['Smiley', 'Image', 'Table', 'HorizontalRule'],
+        ],
+        "extraPlugins": "image2",
+        "filebrowserUploadUrl": "/ckeditor/upload/",
+        "filebrowserBrowseUrl": "/ckeditor/browse/",
+    },
+}
 
-
-
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
