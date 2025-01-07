@@ -144,7 +144,15 @@ if use_s3:
 
     # Static files
     STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+    
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_QUERYSTRING_AUTH = False  # Desativa assinaturas temporárias para URLs públicas
+
+
+    
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
     # Media files
