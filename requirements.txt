@@ -11,6 +11,7 @@ django-storages==1.14.4
 django-taggit==6.1.0
 gunicorn==23.0.0
 jmespath==1.0.1
+olefile==0.47
 packaging==24.2
 pillow==11.1.0
 psycopg2-binary==2.9.10
