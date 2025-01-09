@@ -124,9 +124,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_LOCATION = 'static'
 
-MEDIAFILES_LOCATION = 'media'
 
 
 
@@ -158,10 +156,16 @@ AWS_S3_VERIFY = True
 
 # Static and media file configuration
 STATIC_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/static/'
-STATICFILES_STORAGE = 'app.storage_backends.StaticStorage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/media/'
-DEFAULT_FILE_STORAGE = 'app.storage_backends.MediaStorage'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+AWS_DEFAULT_ACL = 'public-read'
+
+AWS_LOCATION = 'static'
+MEDIAFILES_LOCATION = 'media'
 
 
 CKEDITOR_UPLOAD_PATH = "uploads/" 
