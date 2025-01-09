@@ -37,8 +37,8 @@ ALLOWED_HOSTS = [
     'www.fuxicoteca.com.br'
 ]
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True 
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# SECURE_SSL_REDIRECT = True 
 
 
 # Application definition
@@ -95,17 +95,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Uncomment to use a PostgreSQL database:
-# DATABASES = {
-#     'default': dj_database_url.config(default=config('DATABASE_URL'))
-# }
+DATABASES = {
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
