@@ -33,4 +33,7 @@ urlpatterns = [
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps_dict}, name='django.contrib.sitemaps.views.sitemap'),
     path('robots.txt', include('robots.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),  # Para upload de imagens
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] 
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
