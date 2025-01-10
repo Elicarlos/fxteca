@@ -51,7 +51,7 @@ class HomePageView(ListView):
         if not destaque:
             destaque = Post.objects.filter(is_published=True).order_by('-created_at').first()
         context['destaque'] = destaque
-        context['posts'] = Post.objects.filter(is_published=True).order_by('-created_at')[1:4]
+        context['post'] = Post.objects.filter(is_published=True).order_by('-created_at')[1:4]
         return context
     
 class PostDetailView(DetailView):
