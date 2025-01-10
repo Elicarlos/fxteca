@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = [
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -79,21 +80,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 # Database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }]
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 
 # 33333
 
 
-DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
-}
+# DATABASES = {
+#     'default': dj_database_url.config(default=config('DATABASE_URL'))
+# }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -117,19 +118,9 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_ROOT = BASE_DIR / 'staticfiles' 
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
-
-# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-
-
 
 
 # Configurações de AWS S3
@@ -159,10 +150,18 @@ AWS_S3_USE_SSL = True
 AWS_S3_VERIFY = True
 
 # Static and media file configuration
-STATIC_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/static/'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}://{AWS_S3_CUSTOM_DOMAIN}/media/'
+# URL para acessar arquivos estáticos
+STATIC_URL = '/static/'
+
+# Diretório local para armazenar arquivos estáticos durante o desenvolvimento (geralmente não é usado em produção)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_ROOT = 'media/'
+
+
+
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
@@ -170,6 +169,10 @@ AWS_DEFAULT_ACL = 'public-read'
 
 AWS_LOCATION = 'static'
 MEDIAFILES_LOCATION = 'media'
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+
 
 
 CKEDITOR_UPLOAD_PATH = "uploads/" 
