@@ -8,7 +8,7 @@
     {% comment %}
     Se 'post' não existe no contexto ou for None, o Django não quebra:
     {% endcomment %}
-    {% if post|default_if_none:false %}
+    {% if post|default_if_none:"false" %}
         <title>{{ post.title }} - Fuxicoteca</title>
         <meta name="description" content="{{ post.get_highlight_summary }}">
         <meta name="keywords" 

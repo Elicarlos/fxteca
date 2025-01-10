@@ -7,6 +7,7 @@ from django.template.loader import get_template
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 import os
+from django.db.models import Q
 
 
 def test_template(request):
@@ -17,18 +18,19 @@ class SearchResultsView(ListView):
     model = Post
     template_name = 'blog/search_results.html'
     context_object_name = 'posts'
+    paginate_by = 10  # para evitar lógica manual de paginator
 
     def get_queryset(self):
         query = self.request.GET.get('q')
         if query:
-            queryset = Post.objects.filter(title__icontains=query) | Post.objects.filter(content__icontains=query) if query else Post.objects.none()
-            paginator = Paginator(queryset, 10)  # 10 posts por página
-            page_number = self.request.GET.get('page')
-            return paginator.get_page(page_number)
+            # Filtra por is_published e busca no título/conteúdo
+            return Post.objects.filter(is_published=True).filter(
+                Q(title__icontains=query) |
+                Q(content__icontains=query)
+            ).order_by('-created_at')
         return Post.objects.none()
 
-def post_detail(request):
-    return HttpResponse('detail')
+
 
 def ads_txt(request):
     file_path = os.path.join('static', 'ads.txt')  # Ajuste o caminho se necessário
@@ -39,20 +41,31 @@ def ads_txt(request):
 
 class HomePageView(ListView):
     model = Post
-    template_name =  'blog/home.html'
+    template_name = 'blog/home.html'
     context_object_name = 'posts'
     queryset = Post.objects.filter(is_published=True).order_by('-created_at')
     paginate_by = 5
-    
+
     def get_context_data(self, **kwargs):
+        """
+        Inclui 'destaque' (primeiro post com destaque ou então o mais recente)
+        e substitui 'posts' para pegar os próximos 3 (exemplo).
+        Mas cuidado: isto pode interferir na paginação.
+        """
         context = super().get_context_data(**kwargs)
-        # Selecionar o destaque ou o último post
+
+        # Pega o post com destaque (se existir), senão o mais recente
         destaque = Post.objects.filter(is_published=True, destaque=True).first()
         if not destaque:
             destaque = Post.objects.filter(is_published=True).order_by('-created_at').first()
         context['destaque'] = destaque
-        context['posts'] = Post.objects.filter(is_published=True).order_by('-created_at')[1:4]
+
+        # Pega mais 3 posts, pulando o primeiro
+        # Se 'destaque' for o mesmo que queryset[0], isso funciona, mas pode gerar confusão com paginated posts
+        context['recent_posts'] = Post.objects.filter(is_published=True).order_by('-created_at')[1:4]
+
         return context
+
     
 class PostDetailView(DetailView):
     model = Post
