@@ -24,7 +24,7 @@ ALLOWED_HOSTS = [
 
 # Configuração de segurança para SSL
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True  # Se tiver problemas de redirecionamento local, comente em dev
 
 # Instalação de apps
 INSTALLED_APPS = [
@@ -35,13 +35,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sitemaps',
-    'storages',  # App para integração com S3
+
+    'storages',      # App para integração com S3
     'ckeditor',
     'ckeditor_uploader',
     'robots',
     'django.contrib.sites',
     'meta',
     'taggit',
+
     'blog',
 ]
 
@@ -50,7 +52,10 @@ SITE_ID = 1
 
 # Middlewares
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Middleware para servir arquivos estáticos
+    # Se você usar WhiteNoise, deixe a linha abaixo;
+    # Caso não queria usar WhiteNoise, comente-a
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,6 +72,7 @@ ROOT_URLCONF = 'app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # Se você usar templates fora do padrão, ajusta aqui
         'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -75,7 +81,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'blog.context_processors.categories',  # Exemplo de context processor para categorias do blog
+                # Seu context processor de categorias:
+                'blog.context_processors.categories', 
             ],
         },
     },
@@ -106,36 +113,57 @@ USE_TZ = True
 # Auto field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Configuração de armazenamento no S3
+# =========================================================
+#  ARMAZENAMENTO NO S3: CONFIGURAÇÕES BÁSICAS
+# =========================================================
+
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')  # Substitua pelo nome do seu bucket S3
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+# (Exemplo: 'meu-bucket' sem https, sem s3.amazonaws.com no nome, só o bucket mesmo)
+
+# Domínio customizado do S3 (sem espaços)
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
-# Configuração de cache e controle de cache para arquivos no S3
+# Local onde os estáticos vão ficar dentro do bucket
+AWS_LOCATION = 'static'
+# Configurações do S3
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',  # Cache de 1 dia
 }
 
-AWS_LOCATION = 'static'  # Localização dentro do bucket S3 para arquivos estáticos
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'  # Usando S3 para armazenar arquivos estáticos
+# Ativar S3 para servir arquivos estáticos
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# URL base para servir arquivos estáticos
 STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
 
-# Configuração de mídia (arquivos enviados pelo usuário, como imagens, vídeos)
-DEFAULT_FILE_STORAGE = 'app.storage_backends.MediaStorage'  # Backend customizado para mídia
+# Se quiser/precisar servir media files via outro backend S3:
+# Ex.: app/storage_backends.py (custom class)
+DEFAULT_FILE_STORAGE = 'app.storage_backends.MediaStorage'
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 
-# Configuração dos arquivos estáticos no diretório local (usado pelo collectstatic)
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# =========================================================
+#  CONFIGURAÇÕES LOCAIS DE ARQUIVOS ESTÁTICOS (collectstatic)
+# =========================================================
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Diretório onde os arquivos estáticos são coletados
+# Diretórios (local) de onde coletar estáticos
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),  # pasta local com assets do seu projeto
+]
 
-# Configuração para o CKEditor (upload de imagens, etc.)
-CKEDITOR_UPLOAD_PATH = "uploads/"  # Subdiretório no S3 onde imagens serão armazenadas
+# Para onde o Django move os arquivos estáticos localmente (quando não se usa S3)
+# Necessário mesmo usando S3, pois o Django gera uma pasta temporária
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# =========================================================
+#  CKEDITOR
+# =========================================================
+CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_IMAGE_BACKEND = "pillow"
 CKEDITOR_CONFIGS = {
     "default": {
-        'extraPlugins': 'codesnippet', 
+        'extraPlugins': 'codesnippet',
         "toolbar": "full",
         "height": 400,
         "width": "auto",
@@ -154,7 +182,9 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-# Configuração de logs
+# =========================================================
+#  LOGGING
+# =========================================================
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
