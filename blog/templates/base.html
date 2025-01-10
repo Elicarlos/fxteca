@@ -5,31 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    {% comment %}
-    Se 'post' não existe no contexto ou for None, o Django não quebra:
-    {% endcomment %}
-    {% if post|default_if_none:"false" %}
-        <title>{{ post.title }} - Fuxicoteca</title>
-        <meta name="description" content="{{ post.get_highlight_summary }}">
-        <meta name="keywords" 
-              content="{{ post.keywords|default:post.tags.all|join:', ' }}">
-        <meta name="author" 
-              content="{{ post.author.get_full_name|default:post.author.username }}">
-        <meta property="og:title" content="{{ post.title }}" />
-        <meta property="og:description" content="{{ post.get_highlight_summary }}" />
-
-        <meta property="og:url" content="{{ request.build_absolute_uri }}" />
-        <meta property="og:type" content="article" />
-
-        {% if post.canonical_url %}
-            <link rel="canonical" href="{{ post.canonical_url }}">
-        {% endif %}
-
-        {# Se quiser exibir a imagem do post nas meta-tags, algo assim: #}
-        {% if post.image %}
-            <meta property="og:image" content="{{ post.image.url }}">
-        {% endif %}
-    {% else %}
         <title>Fuxicoteca - Sua fonte de fofocas</title>
         <meta name="description" content="Fuxicoteca é o blog onde você encontra tudo sobre o mundo das fofocas e realities.">
         <meta name="keywords" content="fofoca, realities, celebridades, blog">
@@ -39,7 +14,7 @@
         <meta property="og:image" content="{% static 'images/default-thumbnail.jpg' %}" />
         <meta property="og:url" content="{{ request.build_absolute_uri }}" />
         <meta property="og:type" content="website" />
-    {% endif %}
+
 
     <!-- Google AdSense -->
     <script async 
