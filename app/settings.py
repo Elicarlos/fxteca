@@ -80,21 +80,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 
 
 # 33333
 
 
-# DATABASES = {
-#     'default': dj_database_url.config(default=config('DATABASE_URL'))
-# }
+DATABASES = {
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
