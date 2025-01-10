@@ -92,16 +92,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 # Configuração de banco de dados (Heroku ou ambiente local)
-DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
-}
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
+#     'default': dj_database_url.config(default=config('DATABASE_URL'))
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # Validação de senhas
 AUTH_PASSWORD_VALIDATORS = [
@@ -147,7 +147,7 @@ STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 
 # Se quiser/precisar servir media files via outro backend S3:
 # Ex.: app/storage_backends.py (custom class)
-DEFAULT_FILE_STORAGE = 'app.storage_backends.MediaStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
 
 # =========================================================
