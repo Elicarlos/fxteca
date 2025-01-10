@@ -133,17 +133,17 @@ AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
 # Local onde os estáticos vão ficar dentro do bucket
-AWS_LOCATION = ''
+
 # Configurações do S3
-AWS_S3_OBJECT_PARAMETERS = {
-    'CacheControl': 'max-age=86400',  # Cache de 1 dia
-}
+# AWS_S3_OBJECT_PARAMETERS = {
+#     'CacheControl': 'max-age=86400',  # Cache de 1 dia
+# }
 
 # Ativar S3 para servir arquivos estáticos
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # URL base para servir arquivos estáticos
-STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/static/"
+STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
 
 # Se quiser/precisar servir media files via outro backend S3:
 # Ex.: app/storage_backends.py (custom class)
