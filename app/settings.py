@@ -1,4 +1,3 @@
-
 from decouple import config
 from pathlib import Path
 import os
@@ -7,9 +6,7 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = config('SECRET_KEY')
-
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
@@ -23,11 +20,9 @@ ALLOWED_HOSTS = [
 ]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True 
+SECURE_SSL_REDIRECT = True
 
-
-
-INSTALLED_APPS = [     
+INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -80,18 +75,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 # Database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
-
-# 33333
-
-
 DATABASES = {
     'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
@@ -118,69 +101,54 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 USE_TZ = True
 
-
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# Configurações de AWS S3
+# AWS S3 Configuration
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_SIGNATURE_NAME = config('AWS_S3_SIGNATURE_NAME')
 AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME')
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = None
+AWS_S3_SIGNATURE_NAME = config('AWS_S3_SIGNATURE_NAME', default='s3v4')
 
-AWS_LOCATION = 'static'
-# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# DEFAULT_FILE_STORAGE = 'app.storage_backends.MediaStorage'
+# Static and Media Files Configuration
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
+# URL for static files (JS, CSS, etc.)
+AWS_LOCATION = 'static'
+STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+
+# URL for media files (user-uploaded files)
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
+
+# Use S3 to store static and media files
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Set Cache-Control for S3 objects (useful for performance)
 AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-
-# STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/"
-
-# For serving static files directly from S3
-AWS_S3_URL_PROTOCOL = 'https'
-AWS_S3_USE_SSL = True
-AWS_S3_VERIFY = True
-
-# Static and media file configuration
-
-# URL para acessar arquivos estáticos
-STATIC_URL = '/static/'
-
-# Diretório local para armazenar arquivos estáticos durante o desenvolvimento (geralmente não é usado em produção)
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-MEDIA_ROOT = 'media/'
-
-
-
-MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
+# Permissions for files in S3 (public read access)
 AWS_DEFAULT_ACL = 'public-read'
 
-AWS_LOCATION = 'static'
+# Media Storage Location (within the S3 bucket)
 MEDIAFILES_LOCATION = 'media'
+STATICFILES_LOCATION = 'static'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Local directory for static files (used during development)
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Local directory for media files (used during development)
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# CKEditor Configuration
+CKEDITOR_UPLOAD_PATH = "uploads/"  # Folder in S3 where images will be uploaded
 
-
-CKEDITOR_UPLOAD_PATH = "uploads/" 
-
-CKEDITOR_IMAGE_BACKEND = "pillow"
+# CKEditor configurations
 CKEDITOR_CONFIGS = {
     "default": {
-        'extraPlugins': 'codesnippet', 
+        'extraPlugins': 'codesnippet',
         "toolbar": "full",
         "height": 400,
         "width": "auto",
@@ -194,12 +162,12 @@ CKEDITOR_CONFIGS = {
             ['Smiley', 'Image', 'Table', 'HorizontalRule'],
         ],
         "extraPlugins": "image2",
-        "filebrowserUploadUrl": "/ckeditor/upload/",
+        "filebrowserUploadUrl": "/ckeditor/upload/",  # Adjust if necessary
         "filebrowserBrowseUrl": "/ckeditor/browse/",
     },
 }
 
-# Logging
+# Logging configuration (debugging)
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -213,3 +181,11 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+# Security settings
+SECURE_SSL_REDIRECT = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+X_FRAME_OPTIONS = 'DENY'
+
+  # Change to your actual allowed hosts in production
