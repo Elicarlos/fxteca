@@ -25,8 +25,7 @@ class StaticStorage(S3Boto3Storage):
 
 class MediaStorage(S3Boto3Storage):
     location = settings.MEDIAFILES_LOCATION  # A pasta onde os arquivos de mídia serão armazenados no S3
-
-    host = "s3-%s.amazonaws.com" % settings.AWS_REGION
+    host = "s3-%s.amazonaws.com" % settings.AWS_REGION  # Definindo o host para a região da AWS
 
     @property
     def connection(self):
@@ -35,3 +34,4 @@ class MediaStorage(S3Boto3Storage):
                 self.access_key, self.secret_key,
                 calling_format=self.calling_format, host=self.host)
         return self._connection
+

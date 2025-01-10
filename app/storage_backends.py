@@ -1,11 +1,14 @@
+from django.conf import settings
 from storages.backends.s3boto3 import S3Boto3Storage
 
-# Armazenamento para arquivos de mídia
 class MediaStorage(S3Boto3Storage):
-    location = 'media'  # Pasta dentro do bucket S3 para armazenar mídias
-    file_overwrite = False  # Não sobrescrever arquivos com o mesmo nome
+    location = settings.MEDIAFILES_LOCATION  # A pasta onde os arquivos de mídia serão armazenados no S3
+    host = "s3-%s.amazonaws.com" % settings.AWS_REGION  # Definindo o host para a região da AWS
 
-# Armazenamento para arquivos estáticos
-class StaticStorage(S3Boto3Storage):
-    location = 'static'  # Pasta dentro do bucket S3 para armazenar arquivos estáticos
-    file_overwrite = False  # Não sobrescrever arquivos estáticos com o mesmo nome
+    @property
+    def connection(self):
+        if self._connection is None:
+            self._connection = self.connection_class(
+                self.access_key, self.secret_key,
+                calling_format=self.calling_format, host=self.host)
+        return self._connection
