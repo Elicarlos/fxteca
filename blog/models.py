@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 from taggit.managers import TaggableManager
 from django.utils.html import strip_tags
+from django.urls import reverse
 
 
 class Comment(models.Model):
