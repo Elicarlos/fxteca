@@ -111,12 +111,11 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=86400',
 }
 
-USE_S3 = not DEBUG
+USE_S3 = config('USE_S3', default=False, cast=bool)
 
 if USE_S3:
     STATICFILES_STORAGE = 'app.storage_backends.StaticStorage'
     DEFAULT_FILE_STORAGE = 'app.storage_backends.PublicMediaStorage'
-
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
     MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Adicionado para garantir que o collectstatic funcione
