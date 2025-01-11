@@ -28,21 +28,9 @@ ALLOWED_HOSTS = [
 if not DEBUG:
     SECURE_SSL_REDIRECT = False
     
-    
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
-    
 else:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True  # Se tiver problemas de redirecionamento local, comente em dev
-    
-    DATABASES = {
-        'default': dj_database_url.config(default=config('DATABASE_URL'))
-    }
 
     
 # Instalação de apps
@@ -111,8 +99,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 # Configuração de banco de dados (Heroku ou ambiente local)
+DATABASES = {
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
+}
 
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 # Validação de senhas
 AUTH_PASSWORD_VALIDATORS = [
