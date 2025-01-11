@@ -20,7 +20,7 @@ ALLOWED_HOSTS = [
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 else:
     SECURE_SSL_REDIRECT = False
 
@@ -130,7 +130,7 @@ else:
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-CKEDITOR_UPLOAD_PATH = "media/uploads/"
+CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_IMAGE_BACKEND = "pillow"
 CKEDITOR_CONFIGS = {
     "default": {
