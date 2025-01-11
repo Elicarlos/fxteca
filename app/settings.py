@@ -173,7 +173,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # =========================================================
 #  CKEDITOR
 # =========================================================
-CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_UPLOAD_PATH = "media/uploads/"
 CKEDITOR_IMAGE_BACKEND = "pillow"
 CKEDITOR_CONFIGS = {
     "default": {
