@@ -23,9 +23,16 @@ ALLOWED_HOSTS = [
 ]
 
 # Configuração de segurança para SSL
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SECURE_SSL_REDIRECT = True  # Se tiver problemas de redirecionamento local, comente em dev
 
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = False
+    
+else:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True  # Se tiver problemas de redirecionamento local, comente em dev
+
+    
 # Instalação de apps
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -92,16 +99,16 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 # Configuração de banco de dados (Heroku ou ambiente local)
-DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
-}
-
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
+#     'default': dj_database_url.config(default=config('DATABASE_URL'))
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 # Validação de senhas
 AUTH_PASSWORD_VALIDATORS = [
@@ -135,9 +142,9 @@ AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 # Local onde os estáticos vão ficar dentro do bucket
 
 # Configurações do S3
-# AWS_S3_OBJECT_PARAMETERS = {
-#     'CacheControl': 'max-age=86400',  # Cache de 1 dia
-# }
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',  # Cache de 1 dia
+}
 
 # Ativar S3 para servir arquivos estáticos
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -188,6 +195,13 @@ CKEDITOR_CONFIGS = {
         "filebrowserBrowseUrl": "/ckeditor/browse/",
     },
 }
+
+if DEBUG:
+    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    MEDIA_URL = '/media/'
+
 
 # =========================================================
 #  LOGGING
