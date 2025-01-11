@@ -5,6 +5,10 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+import logging
+logging.basicConfig(level=logging.DEBUG)
+
+
 SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
@@ -117,7 +121,7 @@ if USE_S3:
     STATICFILES_STORAGE = 'app.storage_backends.StaticStorage'
     DEFAULT_FILE_STORAGE = 'app.storage_backends.PublicMediaStorage'
     STATIC_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/static/"
-    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/media/"
+    MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/"
     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Adicionado para garantir que o collectstatic funcione
 else:
     STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
