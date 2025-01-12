@@ -60,6 +60,8 @@ class Post(models.Model):
         ('index, nofollow', 'Index, No Follow'),
     ], default='index, follow')
     
+    meta_author = models.CharField(max_length=100, null=True, blank=True, help_text="Autor para SEO.")
+    
     # Campos para Open Graph
     og_title = models.CharField(max_length=60, null=True, blank=True, help_text="Título para Open Graph.")
     og_description = models.TextField(null=True, blank=True, help_text="Descrição para Open Graph.")
