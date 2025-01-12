@@ -43,7 +43,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
     tags = TaggableManager()
-    keywords = models.TextField(null=True, blank=True, help_text="Palavras-chave separadas por vírgulas.")
+    meta_keywords = models.CharField(max_length=255, null=True, blank=True, help_text="Palavras-chave separadas por vírgulas.")
     canonical_url = models.URLField(null=True, blank=True, help_text="URL canônica para evitar duplicação.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
