@@ -2,8 +2,103 @@
 {% load static %}
 {% load custom_filters %}
 
-{% block title %}{{ post.title }} - Fuxicoteca{% endblock %}
+{% block meta_title %}
+    {{ post.meta_title|default:post.title }} - Fuxicoteca
+{% endblock %}
 
+{% block meta_description %}
+    {{ post.meta_description|default:post.get_meta_description }}
+{% endblock %}
+
+{% block meta_keywords %}
+    {{ post.meta_keywords|default:post.get_meta_keywords }}
+{% endblock %}
+
+{% block meta_author %}
+    {{ post.meta_author|default:"Fuxicoteca" }}
+{% endblock %}
+
+{% block og_title %}
+    {{ post.og_title|default:post.meta_title|default:post.title }} - Fuxicoteca
+{% endblock %}
+
+{% block og_description %}
+    {{ post.og_description|default:post.meta_description|default:post.get_meta_description }}
+{% endblock %}
+
+{% block og_image %}
+    {% if post.og_image %}
+        {{ post.og_image.url }}
+    {% elif post.get_meta_image %}
+        {{ post.get_meta_image }}
+    {% else %}
+        {% static 'images/default-thumbnail.jpg' %}
+    {% endif %}
+{% endblock %}
+
+{% block og_url %}
+    {{ post.get_absolute_url }}
+{% endblock %}
+
+{% block og_type %}
+    article
+{% endblock %}
+
+{% block twitter_title %}
+    {{ post.twitter_title|default:post.meta_title|default:post.title }} - Fuxicoteca
+{% endblock %}
+
+{% block twitter_description %}
+    {{ post.twitter_description|default:post.meta_description|default:post.get_meta_description }}
+{% endblock %}
+
+{% block twitter_image %}
+    {% if post.twitter_image %}
+        {{ post.twitter_image.url }}
+    {% elif post.get_meta_image %}
+        {{ post.get_meta_image }}
+    {% else %}
+        {% static 'images/default-thumbnail.jpg' %}
+    {% endif %}
+{% endblock %}
+
+{% block canonical_url %}
+    {{ post.canonical_url|default:post.get_absolute_url }}
+{% endblock %}
+
+{% block extra_head %}
+    {% if post %}
+        {% if post.structured_data %}
+            <script type="application/ld+json">
+                {{ post.structured_data|safe }}
+            </script>
+        {% else %}
+            <script type="application/ld+json">
+            {
+                "@context": "http://schema.org",
+                "@type": "BlogPosting",
+                "headline": "{{ post.title }}",
+                "description": "{{ post.get_meta_description }}",
+                "image": "{{ post.get_meta_image }}",
+                "author": {
+                    "@type": "Person",
+                    "name": "{{ post.meta_author }}"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": "Fuxicoteca",
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": "{% static 'images/favicon.ico' %}"
+                    }
+                },
+                "datePublished": "{{ post.created_at|date:'c' }}",
+                "dateModified": "{{ post.updated_at|date:'c' }}"
+            }
+            </script>
+        {% endif %}
+    {% endif %}
+{% endblock %}
 
 {% block content %}
 <div class="container my-5">
@@ -26,44 +121,46 @@
     </div>
 
     <!-- Imagem principal -->
-    <img src="{{ post.image.url }}" class="img-fluid rounded shadow mb-4" alt="{{ post.title }}">
+    {% if post.image %}
+        <img src="{{ post.image.url }}" class="img-fluid rounded shadow mb-4" alt="{{ post.title }}">
+    {% endif %}
 
     <!-- Conteúdo do post -->
     <div>
-        <p>{{ post.content|safe }}</p>
-
-        <div class="mt-4">
-            <h5>Compartilhe esta postagem:</h5>
-            <div class="d-flex">
-                <!-- Facebook -->
-                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" 
-                   target="_blank" 
-                   class="btn btn-primary me-2">
-                    Compartilhar no Facebook
-                </a>
-                <!-- Twitter -->
-                <a href="https://twitter.com/intent/tweet?text={{ post.title }}&url={{ request.build_absolute_uri }}" 
-                   target="_blank" 
-                   class="btn btn-info me-2">
-                    Compartilhar no Twitter
-                </a>
-                <!-- WhatsApp -->
-                <a href="https://api.whatsapp.com/send?text={{ post.title }}: {{ request.build_absolute_uri }}" 
-                   target="_blank" 
-                   class="btn btn-success me-2">
-                    Compartilhar no WhatsApp
-                </a>
-                <!-- LinkedIn -->
-                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}" 
-                   target="_blank" 
-                   class="btn btn-secondary">
-                    Compartilhar no LinkedIn
-                </a>
-            </div>
-        </div>
-        
+        {{ post.content|safe }}
     </div>
 
+    <!-- Botões de Compartilhamento -->
+    <div class="mt-4">
+        <h5>Compartilhe esta postagem:</h5>
+        <div class="d-flex flex-wrap">
+            <!-- Facebook -->
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ post.get_absolute_url }}" 
+               target="_blank" 
+               class="btn btn-primary me-2 mb-2">
+                <i class="fab fa-facebook-f me-1"></i> Facebook
+            </a>
+            <!-- Twitter -->
+            <a href="https://twitter.com/intent/tweet?text={{ post.title }}&url={{ post.get_absolute_url }}" 
+               target="_blank" 
+               class="btn btn-info me-2 mb-2">
+                <i class="fab fa-twitter me-1"></i> Twitter
+            </a>
+            <!-- WhatsApp -->
+            <a href="https://api.whatsapp.com/send?text={{ post.title }}: {{ post.get_absolute_url }}" 
+               target="_blank" 
+               class="btn btn-success me-2 mb-2">
+                <i class="fab fa-whatsapp me-1"></i> WhatsApp
+            </a>
+            <!-- LinkedIn -->
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ post.get_absolute_url }}" 
+               target="_blank" 
+               class="btn btn-secondary me-2 mb-2">
+                <i class="fab fa-linkedin-in me-1"></i> LinkedIn
+            </a>
+        </div>
+    </div>
+    
     <!-- Comentários -->
     <div class="mt-5">
         <h3>Comentários</h3>
@@ -76,7 +173,7 @@
                 
                 <!-- Respostas aos comentários -->
                 {% for reply in approved_replies|get_item:comment.id %}
-                <div class="card mt-2">
+                <div class="card mt-2 ms-3">
                     <div class="card-body">
                         <h6 class="card-title">{{ reply.author.get_full_name|default:reply.author.username }}</h6>
                         <p class="card-text">{{ reply.content }}</p>
@@ -113,7 +210,7 @@
             <button type="submit" class="btn btn-primary">Enviar Comentário</button>
         </form>
         {% else %}
-        <!-- <p class="text-muted">Você precisa estar logado para comentar. <a href="{% url 'login' %}">Faça login</a>.</p> -->
+        <p class="text-muted">Você precisa estar logado para comentar. <a href="{% url 'login' %}">Faça login</a>.</p>
         {% endif %}
     </div>
 
@@ -122,7 +219,7 @@
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
         <ins class="adsbygoogle"
             style="display:block"
-            data-ad-client="ca-pub-XXXXXXXXXXXXXX"
+            data-ad-client="ca-pub-6387746355563750"
             data-ad-slot="1234567890"
             data-ad-format="auto"
             data-full-width-responsive="true"></ins>

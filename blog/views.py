@@ -69,7 +69,7 @@ class HomePageView(ListView):
     
 class PostDetailView(DetailView):
     model = Post
-    template_name =  'blog/post_detail.html'
+    template_name = 'blog/post_detail.html'
     context_object_name = 'post'  
     
     def post(self, request, *args, **kwargs):
@@ -81,14 +81,17 @@ class PostDetailView(DetailView):
             comment.author = request.user
             parent_id = request.POST.get('parent_id')
             if parent_id:
-                comment.parent = Comment.objects.get(id=parent_id)
+                try:
+                    comment.parent = Comment.objects.get(id=parent_id)
+                except Comment.DoesNotExist:
+                    comment.parent = None
             comment.save()
             return redirect('post_detail', slug=self.object.slug)
         return self.get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Comentários principais
+        # Comentários principais aprovados
         root_comments = self.object.comments.filter(parent__isnull=True, is_approved=True)
         context['root_comments'] = root_comments
         
@@ -98,6 +101,7 @@ class PostDetailView(DetailView):
         # Formulário de comentário
         context['comment_form'] = CommentForm()
         return context
+
     
 class CategoryPostListView(ListView):
     model = Post

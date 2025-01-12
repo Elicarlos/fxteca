@@ -1,7 +1,37 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Home - Fuxicoteca{% endblock %}
+{% block meta_title %}
+    Home - Fuxicoteca - Sua fonte de fofocas
+{% endblock %}
+
+{% block meta_description %}
+    Bem-vindo ao Fuxicoteca! Aqui você encontra as últimas fofocas, notícias sobre realities e tudo sobre celebridades.
+{% endblock %}
+
+{% block meta_keywords %}
+    fofoca, realities, celebridades, notícias, blog
+{% endblock %}
+
+{% block meta_author %}
+    Fuxicoteca
+{% endblock %}
+
+{% block og_title %}
+    Home - Fuxicoteca - Sua fonte de fofocas
+{% endblock %}
+
+{% block og_description %}
+    Descubra as últimas fofocas, notícias de realities e informações sobre celebridades no Fuxicoteca!
+{% endblock %}
+
+{% block og_image %}
+    {% static 'images/home-og-image.jpg' %}
+{% endblock %}
+
+{% block canonical_url %}
+    {{ request.build_absolute_uri }}
+{% endblock %}
 
 {% block content %}
 <div class="container">
