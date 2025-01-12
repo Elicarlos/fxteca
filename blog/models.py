@@ -110,8 +110,8 @@ class Post(models.Model):
         return self.meta_description or self.content[:150]
 
     def get_meta_keywords(self):
-        if self.keywords:
-            return self.keywords
+        if self.meta_keywords:
+            return self.meta_keywords
         return ', '.join(tag.name for tag in self.tags.all())
 
     def get_meta_author(self):
