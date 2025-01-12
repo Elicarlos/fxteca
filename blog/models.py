@@ -50,6 +50,29 @@ class Post(models.Model):
     destaque = models.BooleanField(default=False) 
     is_published = models.BooleanField(default=True)
     
+    # Campos adicionais para SEO
+    meta_title = models.CharField(max_length=60, null=True, blank=True, help_text="Título para SEO, até 60 caracteres.")
+    meta_description = models.TextField(null=True, blank=True, help_text="Descrição para SEO, até 160 caracteres.")
+    meta_robots = models.CharField(max_length=20, choices=[
+        ('index, follow', 'Index, Follow'),
+        ('noindex, nofollow', 'No Index, No Follow'),
+        ('noindex, follow', 'No Index, Follow'),
+        ('index, nofollow', 'Index, No Follow'),
+    ], default='index, follow')
+    
+    # Campos para Open Graph
+    og_title = models.CharField(max_length=60, null=True, blank=True, help_text="Título para Open Graph.")
+    og_description = models.TextField(null=True, blank=True, help_text="Descrição para Open Graph.")
+    og_image = models.ImageField(upload_to='og_images/', null=True, blank=True, help_text="Imagem para Open Graph.")
+    
+    # Campos para Twitter Cards
+    twitter_title = models.CharField(max_length=60, null=True, blank=True, help_text="Título para Twitter Cards.")
+    twitter_description = models.TextField(null=True, blank=True, help_text="Descrição para Twitter Cards.")
+    twitter_image = models.ImageField(upload_to='twitter_images/', null=True, blank=True, help_text="Imagem para Twitter Cards.")
+    
+    # Dados Estruturados
+    structured_data = models.JSONField(null=True, blank=True, help_text="Dados estruturados em JSON-LD.")
+    
     def generate_summary(self, content, caracteres):
         """Gera um resumo baseado no conteúdo e no número de caracteres."""
         if not content:
@@ -82,7 +105,7 @@ class Post(models.Model):
         return self.title
 
     def get_meta_description(self):
-        return self.content[:150]
+        return self.meta_description or self.content[:150]
 
     def get_meta_keywords(self):
         if self.keywords:
@@ -99,18 +122,17 @@ class Post(models.Model):
         return reverse('post_detail', kwargs={'slug': self.slug})
     
     @property
-    def meta_description(self):
+    def meta_description_content(self):
         return self.get_meta_description()
 
     @property
-    def meta_keywords(self):
+    def meta_keywords_content(self):
         return self.get_meta_keywords()
 
     @property
-    def meta_author(self):
+    def meta_author_content(self):
         return self.get_meta_author()
 
     @property
-    def meta_image(self):
+    def meta_image_content(self):
         return self.get_meta_image()
-
