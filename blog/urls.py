@@ -1,5 +1,5 @@
 from django.urls import path
-from . views import HomePageView, PostDetailView, AboutPageView, ContactPageView, CategoryPostListView, SearchResultsView, ads_txt
+from . views import HomePageView, PostDetailView, AboutPageView, ContactPageView, CategoryPostListView, SearchResultsView, ads_txt, loaderio
 
 
 
@@ -13,5 +13,6 @@ urlpatterns = [
     path('post_detail/<slug:slug>/', PostDetailView.as_view(), name='post_detail'),
     path('search/', SearchResultsView.as_view(), name='search_results'),
     path('ads.txt', ads_txt, name='ads_txt'),
+    path('loaderio.txt', loaderio, name='loaderio_txt'),
     
 ]

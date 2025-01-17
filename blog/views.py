@@ -32,6 +32,13 @@ class SearchResultsView(ListView):
 
 
 
+def loaderio(request):
+    file_path = os.path.join('static', 'loaderio-9a3569bfec7a5734fa323fb30ca12d97.txt')  # Ajuste o caminho se necessário
+    with open(file_path, 'r') as file:
+        response = HttpResponse(file.read(), content_type="text/plain")
+        response['Content-Disposition'] = 'inline; filename=ads.txt'
+        return response
+    
 def ads_txt(request):
     file_path = os.path.join('static', 'ads.txt')  # Ajuste o caminho se necessário
     with open(file_path, 'r') as file:
