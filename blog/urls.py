@@ -13,6 +13,6 @@ urlpatterns = [
     path('post_detail/<slug:slug>/', PostDetailView.as_view(), name='post_detail'),
     path('search/', SearchResultsView.as_view(), name='search_results'),
     path('ads.txt', ads_txt, name='ads_txt'),
-    path('loaderio.txt', loaderio, name='loaderio_txt'),
+    path('loaderio-9a3569bfec7a5734fa323fb30ca12d97.txt', loaderio, name='loaderio_txt'),
     
 ]
