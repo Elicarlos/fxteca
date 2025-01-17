@@ -102,6 +102,11 @@ class Post(models.Model):
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)
+        
+    def get_absolute_url(self):
+        return reverse('post_detail', kwargs={'slug': self.slug})
+
+
 
     def __str__(self):
         return self.title
