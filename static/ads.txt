@@ -1,1 +1,5 @@
 google.com, pub-6387746355563750, DIRECT, f08c47fec0942fa0
+
+#SENDWEBPUSH
+sendwebpush.com, 678a8334cfbfa, DIRECT
+google.com, pub-9597097359230576, RESELLER, f08c47fec0942fa0
