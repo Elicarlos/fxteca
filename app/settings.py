@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'robots',
     'django.contrib.sites',
-    'django.contrib.sitemaps',
     'meta',
     'taggit',
     'blog',
