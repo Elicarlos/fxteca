@@ -1,6 +1,6 @@
-/* Ajuste de espaçamento geral */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Inter', sans-serif;
     line-height: 1.6;
 }
 
@@ -73,7 +73,52 @@ h2 {
 
 .ckeditor-content {
     line-height: 1.8;
-    font-size: 1rem;
-}
-
+    font-size: 16px;
+    color: #333;
+    font-family: "Roboto", sans-serif;
+    margin-bottom: 20px;
+  }
+  
+  .ckeditor-content h1,
+  .ckeditor-content h2,
+  .ckeditor-content h3 {
+    color: #222;
+    font-weight: bold;
+    margin: 20px 0 10px;
+  }
+  
+  .ckeditor-content p {
+    margin-bottom: 15px;
+  }
+  
+  .ckeditor-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 10px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ckeditor-content blockquote {
+    font-style: italic;
+    background-color: #f9f9f9;
+    border-left: 4px solid #ccc;
+    margin: 20px 0;
+    padding: 10px 20px;
+  }
+  
+  .ckeditor-content ul,
+  .ckeditor-content ol {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .ckeditor-content a {
+    color: #ff4081;
+    text-decoration: none;
+  }
+  
+  .ckeditor-content a:hover {
+    text-decoration: underline;
+  }
+  
 
